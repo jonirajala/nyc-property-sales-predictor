@@ -8,9 +8,9 @@ class MLP(nn.Module):
         self.input_size = input_size # 14?
 
         # Layers
-        self.fc1 = nn.Linear(input_size, 64)
-        self.fc2 = nn.Linear(64, 32)
-        self.fc3 = nn.Linear(32, 1)
+        self.fc1 = nn.Linear(input_size, 256)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 1)
         self.relu = nn.ReLU()
 
     def forward(self, x):

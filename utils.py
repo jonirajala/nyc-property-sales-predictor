@@ -1,23 +1,28 @@
 from torch.utils.data import Dataset
+from sklearn.preprocessing import MinMaxScaler
 import torch
 import pandas as pd
 import os
 
 class RealEstateDataset(Dataset):
-    """Face Landmarks dataset."""
-
     def __init__(self, df, transform=None):
-        self.data = df
+        self.prices, self.features = self.normalize(df)
         self.transform = transform
 
+    def normalize(self, df):
+        scaler = MinMaxScaler()
+        prices = torch.tensor(df['SALE PRICE'].values)
+        features = torch.tensor(scaler.fit_transform(df.drop('SALE PRICE', axis=1)))
+        return prices, features
+
     def __len__(self):
-        return len(self.data)
+        return len(self.prices)
 
     def __getitem__(self, idx):
-        sample = self.data.iloc[idx]
-        price = torch.tensor(sample['SALE PRICE'])
-        features = torch.tensor(sample.drop('SALE PRICE'))
-        return price, features.squeeze()
+        price = self.prices[idx]
+        features = self.features[idx]
+
+        return price, features
 
 def load_df(path, filename):
     df = pd.read_csv(os.path.join(path, filename))
